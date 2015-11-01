@@ -1,20 +1,20 @@
-#ifndef DISCO_H
-#define DISCO_H
+#ifndef Memoria_H
+#define Memoria_H
 #include "file.h"
 #include "setor.h"
 #include "lista.h"
 #include <QMainWindow>
 
 /**
- * \class Disco
- * \brief Classe que controla todos as funções do disco
+ * \class Memoria
+ * \brief Classe que controla todos as funções do Memoria
  */
-class Disco {
+class Memoria {
 
 private:
     int numSetores;/**< Guarda a quantidade de setores  */
     int tamSetores;/**< Guarda o tamanho dos setores */
-    int tamanho;/**< Tamanho do disco */
+    int tamanho;/**< Tamanho do Memoria */
     int livre;/**< Quantidade de setores livres */
     char *disk;/** array de char que guarda os valores do arquivo */
 
@@ -24,21 +24,21 @@ private:
 public:
 
     /**
-     * Construtor do disco
+     * Construtor do Memoria
      * @param quantSetores Quantidade de setores
      * @param tamSetores Tamanho dos setores
-     * @param tamDisco Tamanho total do disco
+     * @param tamMemoria Tamanho total do Memoria
      */
-    Disco(int quantSetores, int tamSetores, int tamDisco);
+    Memoria(int quantSetores, int tamSetores, int tamMemoria);
 
     /**
      * Destrutor padrão
      */
-    ~Disco();
+    ~Memoria();
 
     /**
     * Função para salvar as informações do arquivo
-    * @param strValue Valor da string a ser salva no disco
+    * @param strValue Valor da string a ser salva no Memoria
     * @param tamValue Tamanho da string
     * @param strNome Nome do arquivo
     * @return 1 se salvou, 0 se não salvou
@@ -81,30 +81,30 @@ public:
     void InicializarArray(char array[], int tamanho);
 
     /**
-     * Atualiza o pool após alguma modificação no disco (salvar, excluir, formatar, desfragmentar)
+     * Atualiza o pool após alguma modificação no Memoria (salvar, excluir, formatar, desfragmentar)
      */
     void AtualizarPool();
 
     /**
-     * Formata o disco apagando todo o seu conteúdo como um todo, sem a possibilidade de recuperação de nenhum dado
-     * @return 1 se o disco foi formatado corretamente ou 0 caso tenha erro
+     * Formata o Memoria apagando todo o seu conteúdo como um todo, sem a possibilidade de recuperação de nenhum dado
+     * @return 1 se o Memoria foi formatado corretamente ou 0 caso tenha erro
      */
     int Formatar();
 
     /**
-     * Desfragmenta o Disco, deixando os arquivos sem clustes contiguos
+     * Desfragmenta o Memoria, deixando os arquivos sem clustes contiguos
      * @return 1 se formatou, 0 se teve erro
      */
     int Desfragmentar();
 
     /**
-     * Verifica se o disco está fragmentado
+     * Verifica se o Memoria está fragmentado
      * @return 1 se tiver fragmentado, 0 se não tiver
      */
-    int isFragmented(int disco[]);
+    int isFragmented(int Memoria[]);
 
     /**
-    * Função para verificar se o disco tem espaço para receber o dado
+    * Função para verificar se o Memoria tem espaço para receber o dado
     * @param tam
     * @return retorna verdadeiro ou falso
     */
@@ -113,13 +113,13 @@ public:
     /**
       *Função get para captar a quantidade de setores indicada pelo usuário
       *@param quantSetores
-      *@return quantidade de setores existentes no disco
+      *@return quantidade de setores existentes no Memoria
     */
     int getNumSetores();
 
     /**
-     * Função para captar o tamanho do disco
-     * @return tamanho do disco
+     * Função para captar o tamanho do Memoria
+     * @return tamanho do Memoria
     */
     int getTamanho();
 
@@ -139,4 +139,4 @@ public:
     char* itoa(int value, char* result, int base);
 };
 
-#endif // DISCO_H
+#endif // Memoria_H

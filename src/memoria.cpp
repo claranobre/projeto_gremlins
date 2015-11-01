@@ -1,34 +1,33 @@
-#include "disco.h"
+#include "memoria.h"
 #include <iostream>
 #include <stdlib.h>
 #include<stdio.h>
 #include <math.h>
-#include <QMessageBox>
 
-Disco::Disco(int quantSetores, int tamSetores, int tamDisco)
+memoria::memoria(int quantSetores, int tamSetores, int tammemoria)
 {
     this->numSetores = quantSetores;
     this->tamSetores = tamSetores;
-    this->tamanho = tamDisco;
+    this->tamanho = tammemoria;
     this->livre = quantSetores;
 
     // Inicializando o pool no intervalo [0, quantSetores]
     Setor *novo = new Setor(0, 0, quantSetores);
     pool.Insert(0, novo);
 
-    this->disk = new char[tamDisco];
-    InicializarArray(disk, tamDisco);
+    this->disk = new char[tammemoria];
+    InicializarArray(disk, tammemoria);
 }
 
 // Falta terminar de consertar
-Disco::~Disco()
+memoria::~memoria()
 {
     info.~Lista();
     pool.~Lista();
     delete disk;
 }
 
-int Disco::Salvar(const char *strValue, int tamValue, string strNome)
+int memoria::Salvar(const char *strValue, int tamValue, string strNome)
 {
     // Guarda a quantidade de setores necessários para armazenar o dado
     int setoresNecessarios = ceil ((float)tamValue/tamSetores);
@@ -87,7 +86,7 @@ int Disco::Salvar(const char *strValue, int tamValue, string strNome)
     }
 }
 
-int Disco::Excluir(string nome)
+int memoria::Excluir(string nome)
 {
     File *temp;
     for(int i = 0; i< info.Size(); i++){
@@ -113,7 +112,7 @@ int Disco::Excluir(string nome)
     return 0;
 }
 
-QString Disco::Buscar(string nome)
+QString memoria::Buscar(string nome)
 {
     File *temp;
     QString html;
@@ -165,7 +164,7 @@ QString Disco::Buscar(string nome)
     return html;
 }
 
-QString Disco::Listar()
+QString memoria::Listar()
 {
    QString html = "<table border=1><tr><th>Nome</th><th>Tamanho</th><th>Cluster</th></tr>";
    File *aux;
@@ -201,7 +200,7 @@ QString Disco::Listar()
 }
 
 //Inicializa um array com o valor 0
-void Disco::InicializarArray(int array[], int tamanho, int valor)
+void memoria::InicializarArray(int array[], int tamanho, int valor)
 {
     for(int i=0; i<tamanho; i++){
         array[i] = valor;
@@ -209,7 +208,7 @@ void Disco::InicializarArray(int array[], int tamanho, int valor)
 }
 
 //Inicializa um array com o valor 0
-void Disco::InicializarArray(char array[], int tamanho)
+void memoria::InicializarArray(char array[], int tamanho)
 {
     for(int i=0; i<tamanho; i++){
         array[i] = '0';
@@ -217,7 +216,7 @@ void Disco::InicializarArray(char array[], int tamanho)
 }
 
 // Atualiza o pool com os novos valores
-void Disco::AtualizarPool()
+void memoria::AtualizarPool()
 {
     int vazio[numSetores][2];// [0] tem o inicio, [1] tem o final
     int inicio = 0;
@@ -261,7 +260,7 @@ void Disco::AtualizarPool()
 
 }
 
-int Disco::Formatar(){
+int memoria::Formatar(){
     pool.RemoveAll();
     info.RemoveAll();
     livre = numSetores;
@@ -274,7 +273,7 @@ int Disco::Formatar(){
     return 1;
 }
 
-int Disco::Desfragmentar(){
+int memoria::Desfragmentar(){
     if(isFree(1)){
         // vetor que vai informar qual arquivo está em qual setor
         // ex: auxDisk[0] = 1; Setor 0 tá com uma parte do arquivo 1
@@ -306,7 +305,7 @@ int Disco::Desfragmentar(){
                         int pos1 = (tamSetores*j)+k;
                         int pos2 = (tamSetores*(j+1))+k;
 
-                        // troca os valores do disco
+                        // troca os valores do memoria
                         std::swap(disk[pos1], disk[pos2]);
                     }
                 }
@@ -336,7 +335,7 @@ int Disco::Desfragmentar(){
     }
 }
 
-int Disco::isFragmented(int disco[])
+int memoria::isFragmented(int memoria[])
 {
     if(pool.Size()>1)
         return 1;
@@ -345,7 +344,7 @@ int Disco::isFragmented(int disco[])
     for(int i = 0; i<numSetores; i++){
         prox = i;
         for(int j = i; j<numSetores; j++){
-            if(disco[i] == disco[j]){
+            if(memoria[i] == memoria[j]){
                 if(j == (prox+1) || j == prox){
                     prox = j;
                 }
@@ -360,26 +359,26 @@ int Disco::isFragmented(int disco[])
 }
 
 // retorna se tem espaço suficiente para colocar o dado
-bool Disco::isFree(int tam){
+bool memoria::isFree(int tam){
     return livre>=tam;
 }
 
-int Disco::getNumSetores()
+int memoria::getNumSetores()
 {
     return numSetores;
 }
 
-int Disco::getTamanho()
+int memoria::getTamanho()
 {
     return tamanho;
 }
 
-int Disco::getTamSetores()
+int memoria::getTamSetores()
 {
     return tamSetores;
 }
 
-char Disco::getDisk(int id)
+char memoria::getDisk(int id)
 {
     return disk[id];
 }
@@ -389,7 +388,7 @@ char Disco::getDisk(int id)
      * Written by Lukás Chmela
      * Released under GPLv3.
      */
-char* Disco::itoa(int value, char* result, int base) {
+char* memoria::itoa(int value, char* result, int base) {
         // check that the base if valid
         if (base < 2 || base > 36) { *result = '\0'; return result; }
 
