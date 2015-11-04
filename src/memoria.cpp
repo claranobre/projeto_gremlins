@@ -15,16 +15,15 @@ memoria::memoria(int quantSetores, int tamSetores, int tammemoria)
     Setor *novo = new Setor(0, 0, quantSetores);
     pool.Insert(0, novo);
 
-    this->disk = new char[tammemoria];
-    InicializarArray(disk, tammemoria);
+    this->Mem = new char[tammemoria];
+    InicializarArray(Mem, tammemoria);
 }
 
-// Falta terminar de consertar
 memoria::~memoria()
 {
     info.~Lista();
     pool.~Lista();
-    delete disk;
+    delete Mem;
 }
 
 int memoria::Salvar(const char *strValue, int tamValue, string strNome)
@@ -68,7 +67,7 @@ int memoria::Salvar(const char *strValue, int tamValue, string strNome)
                 id++;
             }
             pos = ((setores[id])*tamSetores) + (i%tamSetores);
-            disk[pos] = strValue[i];
+            Mem[pos] = strValue[i];
         }
 
         File *novoArquivo = new File(strNome, tamValue, setores);
@@ -79,9 +78,7 @@ int memoria::Salvar(const char *strValue, int tamValue, string strNome)
         return 1;
 
     } else{ // envia uma msg se não tiver espaço suficiente
-        QMessageBox msgBox;
-        msgBox.setText("Não tem espaço suficiente.");
-        msgBox.exec();
+        cout<<"Não tem espaço suficiente.";
         return 0;
     }
 }
@@ -100,7 +97,7 @@ int memoria::Excluir(string nome)
             for(int j = 0; j < setoresNecessarios; j++){
                 for(int k = 0; k < tamSetores; k++){
                     int pos = (temp->getCluster(j)*tamSetores)+k;
-                    disk[pos] = '0';
+                    Mem[pos] = '0';
                 }
             }
             info.Remove(i);
@@ -112,91 +109,63 @@ int memoria::Excluir(string nome)
     return 0;
 }
 
-QString memoria::Buscar(string nome)
+memoria::Buscar(string nome)
 {
     File *temp;
-    QString html;
     for(int i = 0; i< info.Size(); i++){
         info.GetElem(i,temp);
         if(temp->getNome() == nome){
             char tam[10];
-            html = "<table border=1><tr><th>Nome</th><th>Tamanho</th><th>Cluster</th></tr>";
-
-            html.push_back("<tr> <td align = 'center'>");
-            html.push_back(temp->getNome().c_str());
-            html.push_back("</td>");
-
-            html.push_back("<td align = 'center'>");
+   
+            push_back(temp->getNome().c_str());
             itoa(temp->getTamanho(),tam,10); // pega o tamanho e jogar em 'tam'
             html.push_back( tam);
-            html.push_back("</td>");
 
-            html.push_back("<td align = 'center'>");
             int tamanho = temp->getTamanho();
             int setoresNecessarios = ceil ((float)tamanho/tamSetores);
             for(int j = 0; j<setoresNecessarios; j++){
                itoa(temp->getCluster(j), tam, 10);
                if(j == 0)
-                   html.push_back(tam);
+                push_back(tam);
                else{
-                   html.push_back(", ");
-                   html.push_back(tam);
+                cout<<", ";
+                push_back(tam);
                }
             }
-            html.push_back("</td></tr>");
-
-            html.push_back("<tr><td colspan='3' align='center'><b>Valor</b></td></tr>");
-
-            html.push_back("<tr><td colspan='3' align='center'>");
 
             for(int j = 0; j < setoresNecessarios; j++){
                 for(int k = 0; k < tamSetores; k++){
                     int pos = (temp->getCluster(j)*tamSetores)+k;
-                    html.push_back(disk[pos]);
+                    html.push_back(Mem[pos]);
                 }
             }
-
-            html.push_back("</td></tr>");
-            html.push_back("<table>");
-            return html;
         }
     }
-    return html;
 }
 
-QString memoria::Listar()
+memoria::Listar()
 {
-   QString html = "<table border=1><tr><th>Nome</th><th>Tamanho</th><th>Cluster</th></tr>";
    File *aux;
    for(int i=0; i<info.Size(); i++){
        char tam[10];
        info.GetElem(i, aux);
 
-       html.push_back("<tr> <td align = 'center'>");
-       html.push_back(aux->getNome().c_str());
-       html.push_back("</td>");
+       push_back(aux->getNome().c_str());
 
-       html.push_back("<td align = 'center'>");
        itoa(aux->getTamanho(),tam,10); // pega o tamanho e jogar em 'tam'
-       html.push_back( tam);
-       html.push_back("</td>");
+       push_back( tam);
 
-       html.push_back("<td align = 'center'>");
        int tamanho = aux->getTamanho();
        int setoresNecessarios = ceil ((float)tamanho/tamSetores);
        for(int j = 0; j<setoresNecessarios; j++){
            itoa(aux->getCluster(j), tam, 10);
            if(j == 0)
-               html.push_back(tam);
-           else{
-               html.push_back(", ");
-               html.push_back(tam);
-           }
+            push_back(tam);
+            else
+                cout<<", ";
+                push_back(tam);
        }
-       html.push_back("</td></tr>");
    }
-   html.push_back("<table>");
-   return html;
 }
 
 //Inicializa um array com o valor 0
@@ -224,7 +193,7 @@ void memoria::AtualizarPool()
     int cont = 0;
 
     for(int i = 0; i<numSetores; i++){
-        if(disk[i*tamSetores] == '0'){
+        if(Mem[i*tamSetores] == '0'){
             if(igual == 0){
                 igual = 1;
                 inicio = i;
@@ -260,55 +229,17 @@ void memoria::AtualizarPool()
 
 }
 
-int memoria::Formatar(){
-    pool.RemoveAll();
-    info.RemoveAll();
-    livre = numSetores;
-    InicializarArray(disk, tamanho);
-
-    // Inicializando o pool no intervalo [0, quantSetores]
-    Setor *novo = new Setor(0, 0, numSetores);
-    pool.Insert(0, novo);
-
-    return 1;
-}
-
-int memoria::Desfragmentar(){
+int memoria::Free(){
     if(isFree(1)){
-        // vetor que vai informar qual arquivo está em qual setor
-        // ex: auxDisk[0] = 1; Setor 0 tá com uma parte do arquivo 1
-        // ex: auxDisk[9] = 5; Setor 9 tá com uma parte do arquivo 5
-        int auxDisk[numSetores];
-        InicializarArray(auxDisk, numSetores, 999);
+        int auxMem[numSetores];
+        InicializarArray(auxMem, numSetores, 999);
         File *aux;
         for(int i = 0; i < info.Size(); i++){
             info.GetElem(i, aux);
             int tamanho = aux->getTamanho();
             int setoresNecessarios = ceil ((float)tamanho/tamSetores);
             for(int j = 0; j<setoresNecessarios; j++){
-                auxDisk[aux->getCluster(j)] = (i+1);
-            }
-        }
-
-        // se não tiver fragmentado ele encerra a função
-        if(!isFragmented(auxDisk)){
-            cout<<"I'm fine!"<<endl;
-            return 1;
-        }
-        cout<<"i'm sick =/"<<endl;
-
-        for(int i = 0; i<numSetores; i++){
-            for(int j = 0; j<numSetores-1; j++){
-                if(auxDisk[j] > auxDisk[j+1]) {
-                    std::swap(auxDisk[j], auxDisk[j+1]);
-                    for(int k = 0; k<tamSetores; k++){
-                        int pos1 = (tamSetores*j)+k;
-                        int pos2 = (tamSetores*(j+1))+k;
-
-                        // troca os valores do memoria
-                        std::swap(disk[pos1], disk[pos2]);
-                    }
-                }
+                auxMem[aux->getCluster(j)] = (i+1);
             }
         }
 
@@ -317,8 +248,8 @@ int memoria::Desfragmentar(){
         for(int id = 0; id < info.Size(); id++){
             info.GetElem(id, aux);
             cont = 0;
-            for(int j = 0; j<numSetores; j++){ // j = setor; auxDisk[j] = arquivo
-                if((id+1) == auxDisk[j]){ // para garantir que aux vai pegar só os seus setores
+            for(int j = 0; j<numSetores; j++){ // j = setor; auxMem[j] = arquivo
+                if((id+1) == auxMem[j]){ // para garantir que aux vai pegar só os seus setores
                     aux->setCluster(j, cont);
                     cont++;
                 }
@@ -328,37 +259,12 @@ int memoria::Desfragmentar(){
         return 1;
 
     } else{
-        QMessageBox msgBox;
-        msgBox.setText("Não tem espaço suficiente.");
-        msgBox.exec();
+        cout<<"Não tem espaço suficiente.";
         return 0;
     }
 }
 
-int memoria::isFragmented(int memoria[])
-{
-    if(pool.Size()>1)
-        return 1;
-
-    int prox;
-    for(int i = 0; i<numSetores; i++){
-        prox = i;
-        for(int j = i; j<numSetores; j++){
-            if(memoria[i] == memoria[j]){
-                if(j == (prox+1) || j == prox){
-                    prox = j;
-                }
-                else{
-                    return 1;
-                }
-            }
-        }
-    }
-    return 0;
-
-}
-
-// retorna se tem espaço suficiente para colocar o dado
+// retorna se tem espaço suficiente para ler o dado
 bool memoria::isFree(int tam){
     return livre>=tam;
 }
@@ -378,36 +284,7 @@ int memoria::getTamSetores()
     return tamSetores;
 }
 
-char memoria::getDisk(int id)
+char memoria::getMem(int id)
 {
-    return disk[id];
+    return Mem[id];
 }
-
-/**
-     * C++ version 0.4 char* style "itoa":
-     * Written by Lukás Chmela
-     * Released under GPLv3.
-     */
-char* memoria::itoa(int value, char* result, int base) {
-        // check that the base if valid
-        if (base < 2 || base > 36) { *result = '\0'; return result; }
-
-        char* ptr = result, *ptr1 = result, tmp_char;
-        int tmp_value;
-
-        do {
-            tmp_value = value;
-            value /= base;
-            *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
-        } while ( value );
-
-        // Apply negative sign
-        if (tmp_value < 0) *ptr++ = '-';
-        *ptr-- = '\0';
-        while(ptr1 < ptr) {
-            tmp_char = *ptr;
-            *ptr--= *ptr1;
-            *ptr1++ = tmp_char;
-        }
-        return result;
-    }

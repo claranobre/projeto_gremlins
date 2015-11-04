@@ -5,7 +5,7 @@
 
 /**
  * \class Setor
- * \brief Classe que simula os Setores do HD
+ * \brief Classe que simula uma memória separada por setores
  */
 class Setor
 {

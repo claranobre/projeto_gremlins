@@ -25,7 +25,7 @@ Lista<type>::Lista(const Lista &l) { //construtor de cópia (profunda)
         temp = temp->next;
     }
 }
-//destructor
+//destrutor
 template <class type>
 Lista<type>::~Lista() {
     if (bhvr == LISTASIMPLES)

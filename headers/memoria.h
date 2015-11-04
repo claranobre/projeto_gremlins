@@ -3,18 +3,17 @@
 #include "file.h"
 #include "setor.h"
 #include "lista.h"
-#include <QMainWindow>
 
 /**
  * \class Memoria
- * \brief Classe que controla todos as funções do Memoria
+ * \brief Classe que controla todos as funções da Memoria
  */
 class Memoria {
 
 private:
     int numSetores;/**< Guarda a quantidade de setores  */
     int tamSetores;/**< Guarda o tamanho dos setores */
-    int tamanho;/**< Tamanho do Memoria */
+    int tamanho;/**< Tamanho da Memoria */
     int livre;/**< Quantidade de setores livres */
     char *disk;/** array de char que guarda os valores do arquivo */
 
@@ -24,10 +23,10 @@ private:
 public:
 
     /**
-     * Construtor do Memoria
+     * Construtor da Memoria
      * @param quantSetores Quantidade de setores
      * @param tamSetores Tamanho dos setores
-     * @param tamMemoria Tamanho total do Memoria
+     * @param tamMemoria Tamanho total da Memoria
      */
     Memoria(int quantSetores, int tamSetores, int tamMemoria);
 
@@ -38,7 +37,7 @@ public:
 
     /**
     * Função para salvar as informações do arquivo
-    * @param strValue Valor da string a ser salva no Memoria
+    * @param strValue Valor da string a ser salva na Memoria
     * @param tamValue Tamanho da string
     * @param strNome Nome do arquivo
     * @return 1 se salvou, 0 se não salvou
@@ -51,19 +50,6 @@ public:
      * @return 1 se exclusão foi correta ou 0 caso não tenha excluido
      */
     int Excluir(string Nome);
-
-    /**
-     * Busca um arquivo e retorna os seus dados
-     * @param Nome que será procurado
-     * @return html que será inserido no widget
-     */
-    QString Buscar(string nome);
-
-    /**
-     * Lista os arquivos salvos
-     * @return html para ser inserido no widget
-     */
-    QString Listar();
 
     /**
      * Inicializa um vetor com todos os valores iguais
@@ -81,30 +67,18 @@ public:
     void InicializarArray(char array[], int tamanho);
 
     /**
-     * Atualiza o pool após alguma modificação no Memoria (salvar, excluir, formatar, desfragmentar)
+     * Atualiza o pool após alguma modificação na Memoria
      */
     void AtualizarPool();
 
     /**
-     * Formata o Memoria apagando todo o seu conteúdo como um todo, sem a possibilidade de recuperação de nenhum dado
-     * @return 1 se o Memoria foi formatado corretamente ou 0 caso tenha erro
-     */
-    int Formatar();
-
-    /**
-     * Desfragmenta o Memoria, deixando os arquivos sem clustes contiguos
-     * @return 1 se formatou, 0 se teve erro
-     */
-    int Desfragmentar();
-
-    /**
-     * Verifica se o Memoria está fragmentado
+     * Verifica se a Memoria está com espaços livres
      * @return 1 se tiver fragmentado, 0 se não tiver
      */
-    int isFragmented(int Memoria[]);
+    int Free(int Memoria[]);
 
     /**
-    * Função para verificar se o Memoria tem espaço para receber o dado
+    * Função para verificar se a Memoria tem espaço para receber o dado
     * @param tam
     * @return retorna verdadeiro ou falso
     */
@@ -113,13 +87,13 @@ public:
     /**
       *Função get para captar a quantidade de setores indicada pelo usuário
       *@param quantSetores
-      *@return quantidade de setores existentes no Memoria
+      *@return quantidade de setores existentes na Memoria
     */
     int getNumSetores();
 
     /**
-     * Função para captar o tamanho do Memoria
-     * @return tamanho do Memoria
+     * Função para captar o tamanho da Memoria
+     * @return tamanho da Memoria
     */
     int getTamanho();
 
@@ -134,9 +108,6 @@ public:
      * @param id indice do vetor
      * @return disk[id]
      */
-    char getDisk(int id);
-
-    char* itoa(int value, char* result, int base);
 };
 
 #endif // Memoria_H
