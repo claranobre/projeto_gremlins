@@ -1,31 +1,31 @@
-#include "setor.h"
+#include "bloco.h"
 
-Setor::Setor(int id){
+Bloco::Bloco(int id){
     this->id = id;
 }
 
-Setor::Setor(int id, int inicio, int fim){
+Bloco::Bloco(int id, int inicio, int fim){
     this->inicio = inicio;
     this->fim = fim;
     this->id = id;
 }
 
-Setor::~Setor()
+Bloco::~Bloco()
 {
 
 }
 
-int Setor::getInicio()
+int Bloco::getInicio()
 {
     return inicio;
 }
 
-int Setor::getFim()
+int Bloco::getFim()
 {
     return fim;
 }
 
-int Setor::getId()
+int Bloco::getId()
 {
     return id;
 }

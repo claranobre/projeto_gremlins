@@ -1,35 +1,35 @@
-#ifndef FILE_H
-#define FILE_H
+#ifndef T_H
+#define T_H
 
 #include "lista.h"
 using namespace std;
 
 /**
- * \class File
- * \brief Classe que guarda os arquivos salvos
+ * \class 
+ * \brief Classe que verifica o arquivo
  */
 
-class File
+class T
 {
 public:
     /**
-     * Construtor que inicia as variaveis nome, tamanho e cluster
-     * @param nome do arquivo
+     * Construtor que inicia as variaveis Tag, tamanho e cluster
+     * @param Tag do arquivo
      * @param tamanho do arquivo
      * @param cluster array com os clusters
      */
-    File(string nome, int tamanho, int cluster[]);
+    T(string Tag, int tamanho, int cluster[]);
 
     /**
      * Destrutor padrão
      */
-    ~File();
+    ~T();
 
     /**
-     * Retorna o nome do arquivo
-     * @return nome
+     * Retorna a Tag do arquivo
+     * @return Tag
      */
-    string getNome();
+    string getTag();
 
     /**
      * Retorna o tamanho do arquivo
@@ -52,9 +52,9 @@ public:
     void setCluster(int value, int id);
 
 private:
-    string nome; /**< Nome do arquivo */
+    string Tag; /**< Tag do arquivo */
     int tamanho; /**< Tamanho do arquivo */
     int *cluster; /**< Array que guarda os setores onde os dados deste arquivo estão */
 };
 
-#endif // FILE_H
+#endif // T_H

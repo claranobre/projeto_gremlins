@@ -4,15 +4,24 @@
 #include<stdio.h>
 #include <math.h>
 
-memoria::memoria(int quantSetores, int tamSetores, int tammemoria)
+memoria::memoria(int quantBlocos, int tamBlocos, int tammemoria)
 {
-    this->numSetores = quantSetores;
-    this->tamSetores = tamSetores;
+    this->numBlocos = quantBlocos;
+    this->tamBlocos = tamBlocos;
     this->tamanho = tammemoria;
-    this->livre = quantSetores;
+    this->livre = quantBlocos;
 
-    // Inicializando o pool no intervalo [0, quantSetores]
-    Setor *novo = new Setor(0, 0, quantSetores);
+    /*
+    class StoragePool{
+    public:
+        virtual ~StoragePool();
+        virtual void* Allocate(size_t) = 0;
+        virtual void Free(void *) = 0;
+    };
+    */
+
+    // Inicializando o pool no intervalo [0, quantBlocos]
+    Bloco *novo = new Bloco(0, 0, quantBlocos);
     pool.Insert(0, novo);
 
     this->Mem = new char[tammemoria];
@@ -28,32 +37,32 @@ memoria::~memoria()
 
 int memoria::Salvar(const char *strValue, int tamValue, string strNome)
 {
-    // Guarda a quantidade de setores necessários para armazenar o dado
-    int setoresNecessarios = ceil ((float)tamValue/tamSetores);
+    // Guarda a quantidade de Blocos necessários para armazenar o dado
+    int BlocosNecessarios = ceil ((float)tamValue/tamBlocos);
 
-    //Guarda o id dos setores onde serão inseridos
-    int setores[setoresNecessarios];
-    InicializarArray(setores, setoresNecessarios, 0);
+    //Guarda o id dos Blocos onde serão inseridos
+    int Blocos[BlocosNecessarios];
+    InicializarArray(Blocos, BlocosNecessarios, 0);
 
-    //Testa para saber se existe setores livres
-    if(isFree(setoresNecessarios)){
+    //Testa para saber se existe Blocos livres
+    if(isFree(BlocosNecessarios)){
         int achados = 0;
         int contPool = 0;
-        int contSetores = 0;
-        while(setoresNecessarios > achados){
-            Setor *aux;
+        int contBlocos = 0;
+        while(BlocosNecessarios > achados){
+            Bloco *aux;
             pool.GetElem(contPool, aux);
 
             if((aux->getFim() - aux->getInicio()) == 0){// se o inicio e o fim forem iguais
-                setores[contSetores] = aux->getFim();
+                Blocos[contBlocos] = aux->getFim();
                 achados++;
-                contSetores++;
+                contBlocos++;
             } else{
                 for(int i = aux->getInicio(); i<= aux->getFim(); i++){
-                    setores[contSetores] = i;
+                    Blocos[contBlocos] = i;
                     achados++;
-                    contSetores++;
-                    if(setoresNecessarios <= achados)// se ele já tiver a quantidade necessária então sair o for
+                    contBlocos++;
+                    if(BlocosNecessarios <= achados)// se ele já tiver a quantidade necessária então sair o for
                         break;
                 }
             }
@@ -63,18 +72,18 @@ int memoria::Salvar(const char *strValue, int tamValue, string strNome)
         int pos;
         int id = 0;
         for(int i = 0; i<tamValue; i++){
-            if(((i%tamSetores) == 0) && (i>0)){
+            if(((i%tamBlocos) == 0) && (i>0)){
                 id++;
             }
-            pos = ((setores[id])*tamSetores) + (i%tamSetores);
+            pos = ((Blocos[id])*tamBlocos) + (i%tamBlocos);
             Mem[pos] = strValue[i];
         }
 
-        File *novoArquivo = new File(strNome, tamValue, setores);
+        File *novoArquivo = new File(strNome, tamValue, Blocos);
         info.Insert(info.Size(), novoArquivo);
 
         AtualizarPool();
-        livre = livre - setoresNecessarios;
+        livre = livre - BlocosNecessarios;
         return 1;
 
     } else{ // envia uma msg se não tiver espaço suficiente
@@ -92,16 +101,16 @@ int memoria::Excluir(string nome)
 
             int tamanho = temp->getTamanho();
 
-            int setoresNecessarios = ceil ((float)tamanho/tamSetores);
+            int BlocosNecessarios = ceil ((float)tamanho/tamBlocos);
 
-            for(int j = 0; j < setoresNecessarios; j++){
-                for(int k = 0; k < tamSetores; k++){
-                    int pos = (temp->getCluster(j)*tamSetores)+k;
+            for(int j = 0; j < BlocosNecessarios; j++){
+                for(int k = 0; k < tamBlocos; k++){
+                    int pos = (temp->getCluster(j)*tamBlocos)+k;
                     Mem[pos] = '0';
                 }
             }
             info.Remove(i);
-            livre += setoresNecessarios;
+            livre += BlocosNecessarios;
             AtualizarPool();
             return 1;
         }
@@ -119,11 +128,11 @@ memoria::Buscar(string nome)
    
             push_back(temp->getNome().c_str());
             itoa(temp->getTamanho(),tam,10); // pega o tamanho e jogar em 'tam'
-            html.push_back( tam);
+            push_back( tam);
 
             int tamanho = temp->getTamanho();
-            int setoresNecessarios = ceil ((float)tamanho/tamSetores);
-            for(int j = 0; j<setoresNecessarios; j++){
+            int BlocosNecessarios = ceil ((float)tamanho/tamBlocos);
+            for(int j = 0; j<BlocosNecessarios; j++){
                itoa(temp->getCluster(j), tam, 10);
                if(j == 0)
                 push_back(tam);
@@ -133,10 +142,10 @@ memoria::Buscar(string nome)
                }
             }
 
-            for(int j = 0; j < setoresNecessarios; j++){
-                for(int k = 0; k < tamSetores; k++){
-                    int pos = (temp->getCluster(j)*tamSetores)+k;
-                    html.push_back(Mem[pos]);
+            for(int j = 0; j < BlocosNecessarios; j++){
+                for(int k = 0; k < tamBlocos; k++){
+                    int pos = (temp->getCluster(j)*tamBlocos)+k;
+                        push_back(Mem[pos]);
                 }
             }
         }
@@ -156,8 +165,8 @@ memoria::Listar()
        push_back( tam);
 
        int tamanho = aux->getTamanho();
-       int setoresNecessarios = ceil ((float)tamanho/tamSetores);
-       for(int j = 0; j<setoresNecessarios; j++){
+       int BlocosNecessarios = ceil ((float)tamanho/tamBlocos);
+       for(int j = 0; j<BlocosNecessarios; j++){
            itoa(aux->getCluster(j), tam, 10);
            if(j == 0)
             push_back(tam);
@@ -187,13 +196,13 @@ void memoria::InicializarArray(char array[], int tamanho)
 // Atualiza o pool com os novos valores
 void memoria::AtualizarPool()
 {
-    int vazio[numSetores][2];// [0] tem o inicio, [1] tem o final
+    int vazio[numBlocos][2];// [0] tem o inicio, [1] tem o final
     int inicio = 0;
     int igual = 0;
     int cont = 0;
 
-    for(int i = 0; i<numSetores; i++){
-        if(Mem[i*tamSetores] == '0'){
+    for(int i = 0; i<numBlocos; i++){
+        if(Mem[i*tamBlocos] == '0'){
             if(igual == 0){
                 igual = 1;
                 inicio = i;
@@ -207,7 +216,7 @@ void memoria::AtualizarPool()
             }
         }
 
-        if(i == (numSetores-1)){ // Testando se é o fim do 'for'
+        if(i == (numBlocos-1)){ // Testando se é o fim do 'for'
             if(igual == 1){
                 vazio[cont][0] = inicio;
                 vazio[cont][1] = (i);
@@ -221,7 +230,7 @@ void memoria::AtualizarPool()
 
     cout<<endl;
     for(int i = 0; i<cont; i++){
-        Setor *novo = new Setor(i, vazio[i][0], vazio[i][1]);
+        Bloco *novo = new Bloco(i, vazio[i][0], vazio[i][1]);
         cout<<"["<<vazio[i][0]<<", "<<vazio[i][1]<<"] -> ";
         pool.Insert(i, novo);
     }
@@ -231,14 +240,14 @@ void memoria::AtualizarPool()
 
 int memoria::Free(){
     if(isFree(1)){
-        int auxMem[numSetores];
-        InicializarArray(auxMem, numSetores, 999);
+        int auxMem[numBlocos];
+        InicializarArray(auxMem, numBlocos, 999);
         File *aux;
         for(int i = 0; i < info.Size(); i++){
             info.GetElem(i, aux);
             int tamanho = aux->getTamanho();
-            int setoresNecessarios = ceil ((float)tamanho/tamSetores);
-            for(int j = 0; j<setoresNecessarios; j++){
+            int BlocosNecessarios = ceil ((float)tamanho/tamBlocos);
+            for(int j = 0; j<BlocosNecessarios; j++){
                 auxMem[aux->getCluster(j)] = (i+1);
             }
         }
@@ -248,8 +257,8 @@ int memoria::Free(){
         for(int id = 0; id < info.Size(); id++){
             info.GetElem(id, aux);
             cont = 0;
-            for(int j = 0; j<numSetores; j++){ // j = setor; auxMem[j] = arquivo
-                if((id+1) == auxMem[j]){ // para garantir que aux vai pegar só os seus setores
+            for(int j = 0; j<numBlocos; j++){ // j = Bloco; auxMem[j] = arquivo
+                if((id+1) == auxMem[j]){ // para garantir que aux vai pegar só os seus Blocos
                     aux->setCluster(j, cont);
                     cont++;
                 }
@@ -269,9 +278,9 @@ bool memoria::isFree(int tam){
     return livre>=tam;
 }
 
-int memoria::getNumSetores()
+int memoria::getNumBlocos()
 {
-    return numSetores;
+    return numBlocos;
 }
 
 int memoria::getTamanho()
@@ -279,9 +288,9 @@ int memoria::getTamanho()
     return tamanho;
 }
 
-int memoria::getTamSetores()
+int memoria::getTamBlocos()
 {
-    return tamSetores;
+    return tamBlocos;
 }
 
 char memoria::getMem(int id)

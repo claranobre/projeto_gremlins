@@ -1,7 +1,7 @@
-#ifndef Memoria_H
-#define Memoria_H
+#ifndef MEMORIA_H
+#define MEMORIA_H
 #include "file.h"
-#include "setor.h"
+#include "bloco.h"
 #include "lista.h"
 
 /**
@@ -11,24 +11,24 @@
 class Memoria {
 
 private:
-    int numSetores;/**< Guarda a quantidade de setores  */
-    int tamSetores;/**< Guarda o tamanho dos setores */
+    int numBlocos;/**< Guarda a quantidade de Blocos  */
+    int tamBlocos;/**< Guarda o tamanho dos Blocos */
     int tamanho;/**< Tamanho da Memoria */
-    int livre;/**< Quantidade de setores livres */
-    char *disk;/** array de char que guarda os valores do arquivo */
+    int livre;/**< Quantidade de Blocos livres */
+    char *memory;/** array de char que guarda os valores do arquivo */
 
     Lista<File*> info;/**< Lista com os arquivos */
-    Lista<Setor*> pool;/**< Lista de setores livres */
+    Lista<Bloco*> pool;/**< Lista de Blocos livres */
 
 public:
 
     /**
      * Construtor da Memoria
-     * @param quantSetores Quantidade de setores
-     * @param tamSetores Tamanho dos setores
+     * @param quantBlocos Quantidade de Blocos
+     * @param tamBlocos Tamanho dos Blocos
      * @param tamMemoria Tamanho total da Memoria
      */
-    Memoria(int quantSetores, int tamSetores, int tamMemoria);
+    Memoria(int quantBlocos, int tamBlocos, int tamMemoria);
 
     /**
      * Destrutor padrão
@@ -85,11 +85,11 @@ public:
     bool isFree(int tam);
 
     /**
-      *Função get para captar a quantidade de setores indicada pelo usuário
-      *@param quantSetores
-      *@return quantidade de setores existentes na Memoria
+      *Função get para captar a quantidade de Blocos indicada pelo usuário
+      *@param quantBlocos
+      *@return quantidade de Blocos existentes na Memoria
     */
-    int getNumSetores();
+    int getNumBlocos();
 
     /**
      * Função para captar o tamanho da Memoria
@@ -98,16 +98,16 @@ public:
     int getTamanho();
 
     /**
-    * Função para captar o tamanho de cada setor
-    * @return Tamanho total dos setores
+    * Função para captar o tamanho de cada Bloco
+    * @return Tamanho total dos Blocos
     */
-    int getTamSetores();
+    int getTamBlocos();
 
     /**
      * Retorna o valor de um indice do vetor
      * @param id indice do vetor
-     * @return disk[id]
+     * @return memory[id]
      */
 };
 
-#endif // Memoria_H
+#endif // MEMORIA_H

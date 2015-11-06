@@ -1,25 +1,25 @@
-#ifndef SETOR_H
-#define SETOR_H
+#ifndef BLOCO_H
+#define BLOCO_H
 
 #include "lista.h"
 
 /**
- * \class Setor
- * \brief Classe que simula uma memória separada por setores
+ * \class Bloco
+ * \brief Classe que simula uma memória separada por Blocos
  */
-class Setor
+class Bloco
 {
 private:
-    int id; /**< id do setor */
-    int inicio;/**< inicio do setor */
-    int fim; /**< fim do setor */
+    int id; /**< id do Bloco */
+    int inicio;/**< inicio do Bloco */
+    int fim; /**< fim do Bloco */
 
 public:
     /**
      * Construtor
      * @param id
      */
-    Setor(int id);
+    Bloco(int id);
 
     /**
      * Sobrecarda de construtor
@@ -27,12 +27,12 @@ public:
      * @param inicio
      * @param fim
      */
-    Setor(int id, int inicio, int fim);
+    Bloco(int id, int inicio, int fim);
 
     /**
      * Destrutor padrão
      */
-    ~Setor();
+    ~Bloco();
 
     /**
      * Retorna o valor do inicio
@@ -53,4 +53,4 @@ public:
     int getId();
 };
 
-#endif // SETOR_H
+#endif // BLOCO_H
